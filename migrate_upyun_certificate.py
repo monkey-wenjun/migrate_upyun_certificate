@@ -7,7 +7,7 @@ from time import time
 """
 @ author:wenjun
 @ E-mail: hi@awen.me
-@ datetime:2020/10/27 9:34 上午
+@ datetime:2020/10/27 6:34 上午
 @ software: PyCharm
 @ filename: migrate_upyun_certificate.py
 """
@@ -84,6 +84,7 @@ class MigrateUpyunCertificate:
     def format_result_info(result_json, check_domain):
         """
         格式化输出cer_id 以及到期时间等信息
+        :param check_domain:
         :param result_json:
         :return:
         """
@@ -196,6 +197,7 @@ class MigrateUpyunCertificate:
 
         """
         删除旧的证书
+        :param by_time:
         :param certificate_id:
         :return:
         """
@@ -227,7 +229,8 @@ class MigrateUpyunCertificate:
         print("证书删除结果 {}".format(resp_json))
         return True
 
-    def read_acme_conf(self, conf_path, unix_time):
+    @staticmethod
+    def read_acme_conf(conf_path, unix_time):
         with open(conf_path) as f:
             for i in (f.readlines()):
                 key = i.strip().split("=")
@@ -237,17 +240,18 @@ class MigrateUpyunCertificate:
 
     def main(self):
 
-        ############# 配置信息段 #############
+        """############# 配置信息段 #############"""
         username = "upyun"  # 又拍云用户名，必填
         password = "upyun"  # 又拍云密码，必填
         check_domain = "awen.me"  # 要配置的证书，避免误删其他过期证书，必填
         certificate_path = "/usr/local/nginx/conf/ssl/awen.me/fullchain.cer"  # 证书公钥，建议配置待根证书的证书内容，否则在部分浏览器可能会出现问题。必填
         private_key_path = "/usr/local/nginx/conf/ssl/awen.me/awen.me.key"  # 证书私钥，必填
         domain_conf_path = "/usr/local/nginx/conf/ssl/awen.me/awen.me.conf"  # 证书更新配置文件，用户读取下一次更新时间
-        ############# 配置信息结束 #############
+        """############# 配置信息段 #############"""
         unix_time = int(time())
         update_time = self.read_acme_conf(domain_conf_path, unix_time)
-        if update_time <= 60:
+        print("获取更新时间 {}".format(update_time))
+        if update_time <= 300:
             return
         print("开始登录又拍云")
         self.login(username=username, password=password)
@@ -265,7 +269,7 @@ class MigrateUpyunCertificate:
         new_cer_id = upload_cerfile_info["certificate_id"]
         print("开始迁移证书")
         self.migrate_certificate(new_cer_id=new_cer_id, old_cer_id=old_cer_id)
-        print("开始删除证书")
+        print("开始删除已过期的 {} 证书".format(check_domain))
         self.delete_certificate(old_cer_id, by_time)
 
 
