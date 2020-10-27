@@ -68,8 +68,8 @@ Le_NextRenewTime='1608861351'
 
 ```
 
-4.在本地或 Linux 配置计划任务，比如每周六执行一次这个脚本
+4.在本地或 Linux 配置计划任务，每天执行一次这个脚本
 
 ```
-30 03 * * 6 /usr/bin/python3 /opt/migrate_upyun_certificate/migrate_upyun_certificate.py
+30 03 * * * /usr/bin/python3 /opt/migrate_upyun_certificate/migrate_upyun_certificate.py
 ```
