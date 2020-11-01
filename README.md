@@ -21,13 +21,13 @@
 
 1.首先，假设你已经通过acme.sh 使用 DNS API 的方式申请好了通配符证书。
 
-2. 执行
+2.执行
 ```
 git clone git@github.com:monkey-wenjun/migrate_upyun_certificate.git
 ```
 
 
-3. 打开 migrate_upyun_certificate.py ，找到如下配置
+3.打开 migrate_upyun_certificate.py ，找到如下配置
 
 ```
 ############# 配置信息段 #############
