@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*-coding:utf-8-*-
 from requests import Session
-from time import time
+from time import time, sleep
 
 """
 @ author:wenjun
@@ -200,7 +200,7 @@ class MigrateUpyunCertificate:
         :param certificate_id:
         :return:
         """
-        if by_time > 0:
+        if by_time < 0:
             return
         url = "https://console.upyun.com/api/https/certificate/?certificate_id={}".format(certificate_id)
         headers = {
@@ -223,10 +223,13 @@ class MigrateUpyunCertificate:
 
         response = self.session.delete(url, headers=headers)
         if response.status_code != 200:
-            return False
+            print("证书删除失败，连接异常")
         resp_json = response.json()
-        print("证书删除结果 {}".format(resp_json))
-        return True
+        try:
+            if resp_json["data"]["status"]:
+                print("证书删除成功")
+        except KeyError:
+            print("证书删除失败")
 
     @staticmethod
     def read_acme_conf(conf_path, unix_time):
@@ -251,7 +254,7 @@ class MigrateUpyunCertificate:
         update_time = int(self.read_acme_conf(domain_conf_path, unix_time))
         print(update_time)
         print("距离下一次更新还有 {} 天".format(update_time))
-        if 0 > update_time > -86400:
+        if 0 < update_time < -86400:
             print("还早，不要这么急嘛！")
             return
         print("开始登录又拍云")
@@ -270,6 +273,8 @@ class MigrateUpyunCertificate:
         new_cer_id = upload_cerfile_info["certificate_id"]
         print("开始迁移证书")
         self.migrate_certificate(new_cer_id=new_cer_id, old_cer_id=old_cer_id)
+        sleep(20)
+        print(by_time)
         print("开始删除已过期的 {} 证书".format(check_domain))
         self.delete_certificate(old_cer_id, by_time)
 
