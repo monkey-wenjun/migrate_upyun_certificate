@@ -45,7 +45,7 @@ domain_conf_path = "/usr/local/nginx/conf/ssl/awen.me/awen.me.conf"  # 证书更
 配置又拍云的登录用户名和密码
 配置 certificate_path 和 private_key_path 为你的证书公钥和私钥路径；
 配置 check_domain 为要替换的通配符域名，此选项可以在替换完成证书后，帮助你删除又拍云中已经过期的旧证书；
-配置 domain_conf_path， 该选项会读取 acme.sh 生成的证书配置文件，获取 Le_NextRenewTime 字段，该字段为下一次更新证书的时间，脚本会在该时间点之后进行自动更新证书；
+配置 domain_conf_path， 该选项会读取 acme.sh 生成的证书配置文件，获取 Le_CertCreateTime 字段，该字段为最近一次更新证书的时间，脚本会在该时间点左右进行自动更新证书；
 该文件内容如下
 
 ```
