@@ -233,9 +233,9 @@ class MigrateUpyunCertificate:
         with open(conf_path) as f:
             for i in (f.readlines()):
                 key = i.strip().split("=")
-                if key[0] == "Le_NextRenewTime":
-                    le_nex_renew_time = str(key[1]).replace("'", "")
-                    return (int(le_nex_renew_time) - unix_time) / 60 / 60 / 24
+                if key[0] == "Le_CertCreateTime":
+                    le_cert_create_time = str(key[1]).replace("'", "")
+                    return int(le_cert_create_time) - unix_time
 
     def main(self):
 
@@ -249,8 +249,9 @@ class MigrateUpyunCertificate:
         """############# 配置信息段 #############"""
         unix_time = int(time())
         update_time = int(self.read_acme_conf(domain_conf_path, unix_time))
+        print(update_time)
         print("距离下一次更新还有 {} 天".format(update_time))
-        if update_time != 60:
+        if 0 > update_time > -86400:
             print("还早，不要这么急嘛！")
             return
         print("开始登录又拍云")
